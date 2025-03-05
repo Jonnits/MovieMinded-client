@@ -64,16 +64,19 @@ export const MainView = () => {
     }
 
     return (
-      <div>
-        {movies.map((movie) => (
-            <MovieCard 
-            key={movie.id}
-            movie={movie} 
-            onMovieClick={(newSelectedMovie) => {
-                setSelectedMovie(newSelectedMovie);
-            }}
-            />
-        ))}
-      </div>
+        <div>
+            <h1>MyFlix Movies</h1>
+            <div>
+                {movies.map((movie) => (
+                    <MovieCard 
+                        key={movie.id}
+                        movie={movie} 
+                        onMovieClick={(newSelectedMovie) => {
+                            setSelectedMovie(newSelectedMovie);
+                        }}
+                    />
+                ))}
+            </div>
+        </div>
     );
-  };
+};
