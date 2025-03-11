@@ -7,7 +7,12 @@ export const MainView = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-    
+
+        if (!token) {
+            console.error("No token found. Please log in.");
+            return; 
+        }
+
         fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
             method: "GET",
             headers: {
@@ -28,7 +33,7 @@ export const MainView = () => {
                     image: movie.ImagePath,
                     description: movie.Description,
                     genre: movie.Genre,
-                    director: movie.Director
+                    director: movie.Director,
                 };
             });
             setMovies(moviesFromApi);
