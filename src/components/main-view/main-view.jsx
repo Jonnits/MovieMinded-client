@@ -3,23 +3,40 @@ import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 
 export const MainView = () => {
-    const [movies, setMovies] = useEffect(() => {
-        fetch("https://jonnits.github.io/MovieMinded/")
-        .then((response) => response.json())
+    const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+    
+        fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((data) => {
-            const moviesFromApi = data.docs.map((doc) => {
+            const moviesFromApi = data.map((movie) => {
                 return {
-                    id: doc.key,
-                    title: doc.title,
-                    image: doc.image,
-                    description: doc.description,
-                    genre: doc.genre,
-                    director: doc.director
+                    id: movie._id,
+                    title: movie.Title,
+                    image: movie.ImagePath,
+                    description: movie.Description,
+                    genre: movie.Genre,
+                    director: movie.Director
                 };
-        });
+            });
             setMovies(moviesFromApi);
+        })
+        .catch((error) => {
+            console.error("Error fetching movies:", error);
         });
-    }, []);
+    }, []);    
 
     const [selectedMovie, setSelectedMovie] = useState(null);
 
