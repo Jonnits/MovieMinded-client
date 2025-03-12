@@ -6,25 +6,8 @@ export const MainView = () => {
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            console.error("No token found. Please log in.");
-            return; 
-        }
-
-        fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
+        fetch("https://movieminded-d764560749d0.herokuapp.com/movies")
+        .then((response) => response.json())
         .then((data) => {
             const moviesFromApi = data.map((movie) => {
                 return {
@@ -33,7 +16,7 @@ export const MainView = () => {
                     image: movie.ImagePath,
                     description: movie.Description,
                     genre: movie.Genre,
-                    director: movie.Director,
+                    director: movie.Director
                 };
             });
             setMovies(moviesFromApi);

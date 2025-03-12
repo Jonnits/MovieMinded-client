@@ -18590,20 +18590,7 @@ const MainView = ()=>{
     _s();
     const [movies, setMovies] = (0, _react.useState)([]);
     (0, _react.useEffect)(()=>{
-        const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("No token found. Please log in.");
-            return;
-        }
-        fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then((response)=>{
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return response.json();
-        }).then((data)=>{
+        fetch("https://movieminded-d764560749d0.herokuapp.com/movies").then((response)=>response.json()).then((data)=>{
             const moviesFromApi = data.map((movie)=>{
                 return {
                     id: movie._id,
@@ -18625,14 +18612,14 @@ const MainView = ()=>{
         onBackClick: ()=>setSelectedMovie(null)
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 50,
+        lineNumber: 33,
         columnNumber: 9
     }, undefined);
     if (movies.length === 0) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: "The list is empty!"
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 55,
+        lineNumber: 38,
         columnNumber: 16
     }, undefined);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18641,7 +18628,7 @@ const MainView = ()=>{
                 children: "MyFlix Movies"
             }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 60,
+                lineNumber: 43,
                 columnNumber: 13
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18652,18 +18639,18 @@ const MainView = ()=>{
                         }
                     }, movie.id, false, {
                         fileName: "src/components/main-view/main-view.jsx",
-                        lineNumber: 63,
+                        lineNumber: 46,
                         columnNumber: 21
                     }, undefined))
             }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 61,
+                lineNumber: 44,
                 columnNumber: 13
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 59,
+        lineNumber: 42,
         columnNumber: 9
     }, undefined);
 };
