@@ -9,21 +9,23 @@ export const MainView = () => {
         fetch("https://movieminded-d764560749d0.herokuapp.com/movies")
         .then((response) => response.json())
         .then((data) => {
-            const moviesFromApi = data.map((movie) => {
-                return {
-                    id: movie._id,
-                    title: movie.Title,
-                    image: movie.ImagePath,
-                    description: movie.Description,
-                    genre: movie.Genre,
-                    director: movie.Director
-                };
-            });
+            console.log("API response:", data); // Debugging log
+            const moviesFromApi = data.map((movie) => ({
+                id: movie._id,
+                title: movie.Title,
+                image: movie.ImagePath,
+                description: movie.Description,
+                genre: movie.Genre ? { 
+                    Name: movie.Genre.Name, 
+                    Description: movie.Genre.Description 
+                } : { Name: "Unknown", Description: "" }, 
+                director: movie.Director ? { Name: movie.Director.Name } : { Name: "Unknown" }
+            }));
             setMovies(moviesFromApi);
         })
         .catch((error) => {
             console.error("Error fetching movies:", error);
-        });
+        });    
     }, []);    
 
     const [selectedMovie, setSelectedMovie] = useState(null);
@@ -37,6 +39,8 @@ export const MainView = () => {
     if (movies.length === 0) {
         return <div>The list is empty!</div>;
     }
+
+    console.log("Selected movie:", selectedMovie);
 
     return (
         <div>
