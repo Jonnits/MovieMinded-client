@@ -4,6 +4,7 @@ export const MovieCard = ({ movie, onMovieClick }) => {
     return (
         <div
             onClick={() => {
+                console.log("Movie clicked: ", movie);
                 onMovieClick(movie);
             }}
         >
@@ -16,8 +17,14 @@ MovieCard.propTypes = {
     movie: PropTypes.shape({
         title: PropTypes.string.isRequired,
         image: PropTypes.string.isRequired,
-        genre: PropTypes.string.isRequired,
-        year: PropTypes.number.isRequired
+        genre: PropTypes.shape({
+            Name: PropTypes.string.isRequired,
+            Description: PropTypes.string
+        }).isRequired,
+        director: PropTypes.shape({ 
+            Name: PropTypes.string.isRequired
+        }).isRequired,
+        description: PropTypes.string.isRequired
     }).isRequired,
     onMovieClick: PropTypes.func.isRequired
 };

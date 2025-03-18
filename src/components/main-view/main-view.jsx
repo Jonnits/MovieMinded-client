@@ -57,6 +57,8 @@ export const MainView = () => {
         return <div>The list is empty!</div>;
     }
 
+    console.log("Selected movie:", selectedMovie);
+
     return (
         <div>
             <h1>MyFlix Movies</h1>
