@@ -9,31 +9,29 @@ export const MainView = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        fetch("https://movieminded-d764560749d0.herokuapp.com/movies")
+        if (!token) {
+            return;
+        }
+
+        fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
+            headers: { Authorization: `Bearer ${token}` }
+        })
         .then((response) => response.json())
         .then((data) => {
-            console.log("API response:", data); 
-            const moviesFromApi = data.map((movie) => ({
-                id: movie._id,
-                title: movie.Title,
-                image: movie.ImagePath,
-                description: movie.Description,
-                genre: movie.Genre ? { 
-                    Name: movie.Genre.Name, 
-                    Description: movie.Genre.Description 
-                } : { Name: "Unknown", Description: "" }, 
-                director: movie.Director ? { Name: movie.Director.Name } : { Name: "Unknown" }
-            }));
-            setMovies(moviesFromApi);
-        })
-        .catch((error) => {
-            console.error("Error fetching movies:", error);
-        });    
-    }, []);    
+            console.log(data); 
+        });
+    }, [token]);
 
     if (!user) {
-        return <LoginView onLoggedIn={(user) => setUser(user)} />;
-      }
+        return (
+        <LoginView 
+        onLoggedIn={(user, token) => {
+            setUser(user);
+            setToken(token);
+        }} 
+        />
+    );
+    }
 
     if (selectedMovie) {
         return (
@@ -41,10 +39,9 @@ export const MainView = () => {
             <button 
                 onClick={() => {
                     setUser(null);
+                    setToken(null);
                 }}
-                >
-                    Logout 
-                    </button>
+                > Logout </button>
         <MovieView movie={selectedMovie} onBackClick={() => setSelectedMovie(null)} 
             />
             </>
