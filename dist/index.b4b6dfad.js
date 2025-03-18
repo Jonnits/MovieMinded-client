@@ -18585,70 +18585,73 @@ var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _movieCard = require("../movie-card/movie-card");
 var _movieView = require("../movie-view/movie-view");
+var _loginView = require("../login-view/login-view");
 var _s = $RefreshSig$();
 const MainView = ()=>{
     _s();
-    const [movies, setMovies] = (0, _react.useState)([
-        {
-            id: 1,
-            title: "The Shawshank Redemption",
-            image: "https://images-na.ssl-images-amazon.com/images/I/51zUbui+gbL._AC_.jpg",
-            description: "A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, while maintaining his innocence and trying to remain hopeful through simple compassion.",
-            genre: "Drama",
-            director: "Frank Darabont",
-            year: 1994
-        },
-        {
-            id: 2,
-            title: "The Godfather",
-            image: "https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-            description: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-            genre: "Crime",
-            director: "Francis Ford Coppola",
-            year: 1972
-        },
-        {
-            id: 3,
-            title: "The Dark Knight",
-            image: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UX1000_.jpg",
-            description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-            genre: "Action",
-            director: "Christopher Nolan",
-            year: 2008
-        },
-        {
-            id: 4,
-            title: "The Godfather Part II",
-            image: "https://m.media-amazon.com/images/M/MV5BMDIxMzBlZDktZjMxNy00ZGI4LTgxNDEtYWRlNzRjMjJmOGQ1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-            description: "The early life and career of Vito Corleone in 1920s New York City is portrayed, while his son, Michael, expands and tightens his grip on the family crime syndicate.",
-            genre: "Crime",
-            director: "Francis Ford Coppola",
-            year: 1974
-        },
-        {
-            id: 5,
-            title: "12 Angry Men",
-            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/12_Angry_Men_%281957_film_poster%29.jpg/1200px-12_Angry_Men_%281957_film_poster%29.jpg",
-            description: "The jury in a New York City murder trial is frustrated by a single member whose skeptical caution forces them to more carefully consider the evidence before jumping to a hasty verdict.",
-            genre: "Drama",
-            director: "Sidney Lumet",
-            year: 1957
-        }
-    ]);
+    const [movies, setMovies] = (0, _react.useState)([]);
     const [selectedMovie, setSelectedMovie] = (0, _react.useState)(null);
-    if (selectedMovie) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieView.MovieView), {
-        movie: selectedMovie,
-        onBackClick: ()=>setSelectedMovie(null)
+    const [user, setUser] = (0, _react.useState)(null);
+    (0, _react.useEffect)(()=>{
+        fetch("https://movieminded-d764560749d0.herokuapp.com/movies").then((response)=>response.json()).then((data)=>{
+            console.log("API response:", data);
+            const moviesFromApi = data.map((movie)=>({
+                    id: movie._id,
+                    title: movie.Title,
+                    image: movie.ImagePath,
+                    description: movie.Description,
+                    genre: movie.Genre ? {
+                        Name: movie.Genre.Name,
+                        Description: movie.Genre.Description
+                    } : {
+                        Name: "Unknown",
+                        Description: ""
+                    },
+                    director: movie.Director ? {
+                        Name: movie.Director.Name
+                    } : {
+                        Name: "Unknown"
+                    }
+                }));
+            setMovies(moviesFromApi);
+        }).catch((error)=>{
+            console.error("Error fetching movies:", error);
+        });
+    }, []);
+    if (!user) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _loginView.LoginView), {
+        onLoggedIn: (user)=>setUser(user)
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 58,
-        columnNumber: 9
+        lineNumber: 35,
+        columnNumber: 16
     }, undefined);
+    if (selectedMovie) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                onClick: ()=>{
+                    setUser(null);
+                },
+                children: "Logout"
+            }, void 0, false, {
+                fileName: "src/components/main-view/main-view.jsx",
+                lineNumber: 41,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieView.MovieView), {
+                movie: selectedMovie,
+                onBackClick: ()=>setSelectedMovie(null)
+            }, void 0, false, {
+                fileName: "src/components/main-view/main-view.jsx",
+                lineNumber: 48,
+                columnNumber: 9
+            }, undefined)
+        ]
+    }, void 0, true);
     if (movies.length === 0) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: "The list is empty!"
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 63,
+        lineNumber: 55,
         columnNumber: 16
     }, undefined);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18657,7 +18660,7 @@ const MainView = ()=>{
                 children: "MyFlix Movies"
             }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 68,
+                lineNumber: 60,
                 columnNumber: 13
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18668,22 +18671,22 @@ const MainView = ()=>{
                         }
                     }, movie.id, false, {
                         fileName: "src/components/main-view/main-view.jsx",
-                        lineNumber: 71,
+                        lineNumber: 63,
                         columnNumber: 21
                     }, undefined))
             }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 69,
+                lineNumber: 61,
                 columnNumber: 13
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 67,
+        lineNumber: 59,
         columnNumber: 9
     }, undefined);
 };
-_s(MainView, "E2QrTlxbUwIQLkEoJs1v0jZgVic=");
+_s(MainView, "AA2Lbd5vppiQn5Rpxq/geFPiCys=");
 _c = MainView;
 var _c;
 $RefreshReg$(_c, "MainView");
@@ -18693,7 +18696,7 @@ $RefreshReg$(_c, "MainView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../movie-card/movie-card":"bwuIu","../movie-view/movie-view":"ggaUx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"bwuIu":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../movie-card/movie-card":"bwuIu","../movie-view/movie-view":"ggaUx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../login-view/login-view":"9YtA0"}],"bwuIu":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$67b2 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -19818,6 +19821,106 @@ $RefreshReg$(_c, "MovieView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","prop-types":"7wKI2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"lJZlQ":[function() {},{}]},["aQL8O","7qMjn","d8Dch"], "d8Dch", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","prop-types":"7wKI2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"9YtA0":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$9fee = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$9fee.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "LoginView", ()=>LoginView);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _s = $RefreshSig$();
+const LoginView = ({ onLoggedIn })=>{
+    _s();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const handleSubmit = (event)=>{
+        event.preventDefault();
+        const data = {
+            access: username,
+            secret: password
+        };
+        fetch("https://openlibrary.org/account/login.json", {
+            method: "POST",
+            body: JSON.stringify(data)
+        }).then((response)=>{
+            if (response.ok) onLoggedIn(username);
+            else alert("Login failed");
+        });
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
+        onSubmit: handleSubmit,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Username:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "text",
+                        minlength: "3",
+                        maxlength: "20",
+                        value: username,
+                        onChange: (e)=>setUsername(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/login-view/login-view.jsx",
+                        lineNumber: 30,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/login-view/login-view.jsx",
+                lineNumber: 28,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Password:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "password",
+                        value: password,
+                        onChange: (e)=>setPassword(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/login-view/login-view.jsx",
+                        lineNumber: 41,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/login-view/login-view.jsx",
+                lineNumber: 39,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                type: "submit",
+                children: "Submit"
+            }, void 0, false, {
+                fileName: "src/components/login-view/login-view.jsx",
+                lineNumber: 48,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/login-view/login-view.jsx",
+        lineNumber: 27,
+        columnNumber: 5
+    }, undefined);
+};
+_s(LoginView, "Lrw7JeD9zj6OUWhT/IH4OIvPKEk=");
+_c = LoginView;
+var _c;
+$RefreshReg$(_c, "LoginView");
+
+  $parcel$ReactRefreshHelpers$9fee.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"lJZlQ":[function() {},{}]},["aQL8O","7qMjn","d8Dch"], "d8Dch", "parcelRequire94c2")
 
 //# sourceMappingURL=index.b4b6dfad.js.map
