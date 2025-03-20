@@ -1,6 +1,20 @@
 import { useState, useEffect } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
+import { SignupView } from "../signup-view/signup-view";
+
+if (!user) {
+    return (
+      <>
+        <LoginView onLoggedIn={(user, token) => {
+          setUser(user);
+          setToken(token);
+        }} />
+        or
+        <SignupView />
+      </>
+    );
+  }
 
 export const MainView = () => {
     const [movies, setMovies] = useState([]);
@@ -59,3 +73,6 @@ export const MainView = () => {
         </div>
     );
 };
+
+
+<button onClick={() => { setUser(null); }}>Logout</button>
