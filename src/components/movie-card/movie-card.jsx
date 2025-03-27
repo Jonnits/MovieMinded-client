@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Button, Card } from "react-bootstrap";
 
-import "./index.scss";
+import "../../index.scss";
 
 export const MovieCard = ({ movie, onMovieClick }) => {
     return (
