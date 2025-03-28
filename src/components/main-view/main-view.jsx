@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
@@ -13,8 +13,31 @@ export const MainView = () => {
     const [selectedMovie, setSelectedMovie] = useState(null);
 
     useEffect(() => {
-        fetch("https://movieminded-d764560749d0.herokuapp.com/movies")
-        .then((response) => response.json())
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+
+        if (storedUser && storedToken) {
+            setUser(JSON.parse(storedUser));
+            setToken(storedToken);
+        }
+    }, []);    
+
+    useEffect(() => {
+        if (!token) return;
+        
+        fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`, 
+                "Content-Type": "application/json"
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((data) => {
             const moviesFromApi = data.map((movie) => ({
                 id: movie._id,
@@ -22,53 +45,58 @@ export const MainView = () => {
                 image: movie.ImagePath,
                 description: movie.Description,
                 genre: movie.Genre ? { 
-                    Name: movie.Genre.Name, 
-                    Description: movie.Genre.Description 
-                } : { Name: "Unknown", Description: "" }, 
-                director: movie.Director ? { Name: movie.Director.Name } : { Name: "Unknown" }
+                    name: movie.Genre.Name, 
+                    description: movie.Genre.Description 
+                } : { name: "Unknown", description: "" }, 
+                director: movie.Director ? { 
+                    name: movie.Director.Name,
+                    bio: movie.Director.Bio
+                } : { name: "Unknown", bio: "" },
+                actors: movie.Actors || [],
+                featured: movie.Featured || false
             }));
             setMovies(moviesFromApi);
         })
         .catch((error) => {
             console.error("Error fetching movies:", error);
         });    
-    }, []);
+    }, [token]);    
 
     return (
         <Row className="justify-content-md-center">
             {!user ? (
-          <Col md={5}>
-            <LoginView onLoggedIn={(user, token) => {
-                setUser(user);
-                setToken(token);
-            }} />
-           <h3>Or</h3>
-            <SignupView />
-            </Col>
-        ) : selectedMovie ? (
-          <Col md={8}>
-          <MovieView 
-            movie={selectedMovie} 
-            onBackClick={() => setSelectedMovie(null)} 
-          />
-          </Col>
-        ) : movies.length === 0 ? (
-          <div>The list is empty!</div>
-        ) : (
-          <>
-            {movies.map((movie) => (
-                <Col key={movie.id} md={3}>
-              <MovieCard
-                key={movie.id}
-                movie={movie}
-                onMovieClick={(newSelectedMovie) => {
-                  setSelectedMovie(newSelectedMovie);
-                }}
-              />
-              </Col>
-            ))}
-          </>
-        )}
+                <Col md={5}>
+                    <LoginView onLoggedIn={(user, token) => {
+                        setUser(user);
+                        setToken(token);
+                    }} />
+                    <h3 className="text-center my-3">Or</h3>
+                    <SignupView />
+                </Col>
+            ) : selectedMovie ? (
+                <Col md={8}>
+                    <MovieView 
+                        movie={selectedMovie} 
+                        onBackClick={() => setSelectedMovie(null)} 
+                    />
+                </Col>
+            ) : movies.length === 0 ? (
+                <div>The list is empty!</div>
+            ) : (
+                <>
+                    {movies.map((movie) => (
+                        <Col key={movie.id} md={3}>
+                            <MovieCard
+                                key={movie.id}
+                                movie={movie}
+                                onMovieClick={(newSelectedMovie) => {
+                                    setSelectedMovie(newSelectedMovie);
+                                }}
+                            />
+                        </Col>
+                    ))}
+                </>
+            )}
         </Row>
     );
 };
