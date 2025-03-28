@@ -1,18 +1,9 @@
-$primary: SeaGreen;
-$body-bg: Honeydew;
+$color: steelblue;
+$primary: #6f42c1;
+$body-bg: rgb(234, 234, 234);
 
 @import '~bootstrap/scss/bootstrap.scss';
 
-$color: steelblue;
-
 .my-flix {
   color: $color;
-}
-
-.back-button {
-  padding: 4px 12px 4px 12px;
-  color: whitesmoke;
-  background-color: dodgerblue;
-  border: none;
-  border-radius: 4px;
 }
