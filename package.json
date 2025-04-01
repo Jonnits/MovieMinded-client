@@ -21,7 +21,15 @@
   "dependencies": {
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
+<<<<<<< Updated upstream
     "react-dom": "^19.0.0"
+=======
+    "react-bootstrap": "^2.10.9",
+    "react-dom": "^19.0.0",
+    "react-router": "6.3.0",
+    "react-router-dom": "6.3.0",
+    "react-scripts": "4.0.0"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.13.3",
