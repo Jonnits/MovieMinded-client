@@ -1,31 +1,30 @@
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
+import { Button, Card } from "react-bootstrap";
 
 export const MovieView = ({ movie, onBackClick }) => {
     return (
-        <div>
-            <button onClick={onBackClick}>Back</button>
-            <div>
-                <div>
-                    <img src={movie.image} />
-                </div>
-                <div>
-                    <span>Title: </span>
-                    <span>{movie.title}</span>
-                </div>
-                <div>
-                    <span>Director: </span>
-                    <span>{movie.director.Name}</span>
-                </div>
-                <div>
-                    <span>Genre: </span>
-                    <span>{movie.genre.Name} </span>
-                </div>
-                <div>
-                    <span>Description: </span>
-                    <span>{movie.description}</span>
-                </div>
-            </div>
-        </div>
+        <Card className="movie-view">
+            <Card.Img variant="top" src={movie.image} />
+            <Card.Body>
+                <Card.Title>{movie.title}</Card.Title>
+                <Card.Text>{movie.description}</Card.Text>
+
+                <Card.Text>
+                    <strong>Director:</strong> {movie.director.name}<br />
+                    <strong>Bio:</strong> {movie.director.bio}
+                </Card.Text>
+
+                <Card.Text>
+                    <strong>Genre:</strong> {movie.genre.name}<br />
+                    <strong>Description:</strong> {movie.genre.description}
+                </Card.Text>
+
+                <Button variant="primary" onClick={onBackClick}>
+                    Back to Movies
+                </Button>
+            </Card.Body>
+        </Card>
     );
 };
 
@@ -33,20 +32,15 @@ MovieView.propTypes = {
     movie: PropTypes.shape({
         title: PropTypes.string.isRequired,
         image: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
         director: PropTypes.shape({
-            Name: PropTypes.string.isRequired,
-            Bio: PropTypes.string,
-            Birth: PropTypes.string,
-            Death: PropTypes.string
-        }).isRequired,        
-        genre: PropTypes.arrayOf(
-            PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                description: PropTypes.string
-            })
-        ).isRequired,        
-        year: PropTypes.number.isRequired,
-        description: PropTypes.string.isRequired
+            name: PropTypes.string.isRequired,
+            bio: PropTypes.string.isRequired,
+        }).isRequired,
+        genre: PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            description: PropTypes.string.isRequired,
+        }).isRequired,
     }).isRequired,
-    onBackClick: PropTypes.func.isRequired
+    onBackClick: PropTypes.func.isRequired,
 };

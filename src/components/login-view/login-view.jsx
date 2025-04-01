@@ -1,65 +1,71 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Form, Button, Card } from "react-bootstrap";
 
 export const LoginView = ({ onLoggedIn }) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const handleSubmit = (event) => {
-        event.preventDefault();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-        const data = {
-            Username: username,
-            Password: password
-        };
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-        fetch("https://movieminded-d764560749d0.herokuapp.com/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Login response: ", data);
-                if (data.user) {
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    localStorage.setItem("token", data.token);
-                    onLoggedIn(data.user, data.token);
-                } else {
-                    alert("No such user");
-                }
-            })
-            .catch((e) => {
-                console.error("Login error:", e);
-                alert("Login failed");
-            });
-
-        return (
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Username:
-                    <input 
-                        type="text"
-                        minlength="3"
-                        maxlength="20"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </label>
-                <label>
-                    Password:
-                    <input 
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </label>
-                <button type="submit">
-                    Submit
-                </button>
-            </form>
-        );
+    const data = {
+      Username: username,
+      Password: password
     };
+
+    fetch("https://movieminded-d764560749d0.herokuapp.com/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(async (response) => {
+        const responseData = await response.json();
+        if (response.ok) {
+            localStorage.setItem("user", JSON.stringify(responseData.user));
+            localStorage.setItem("token", responseData.token);
+            setUser(responseData.user);
+            setToken(responseData.token);
+        } else {
+            alert(`Login failed: ${responseData.message || "Unknown error"}`);
+        }
+    })
+    .catch((error) => console.error("Login error:", error));
+};
+
+  return (
+    <Card className="p-4 shadow-sm">
+      <Card.Body>
+        <Card.Title className="text-center">Login</Card.Title>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="formUsername" className="mb-3">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              placeholder="Enter username"
+            />
+          </Form.Group>
+
+          <Form.Group controlId="formPassword" className="mb-3">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Enter password"
+            />
+          </Form.Group>
+
+          <Button variant="primary" type="submit" className="w-100">
+            Login
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
+  );
 };
