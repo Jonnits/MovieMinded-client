@@ -1,31 +1,33 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, Card } from "react-bootstrap";
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+import "./index.scss";
 
-export const MovieView = ({ movie, onBackClick }) => {
+export const MovieView = ({ movies }) => {
+    const { movieId } = useParams();
+
+    const movie = movies.find((b) => b.id === movieId);
+
     return (
-        <Card className="movie-view">
-            <Card.Img variant="top" src={movie.image} />
-            <Card.Body>
-                <Card.Title>{movie.title}</Card.Title>
-                <Card.Text>{movie.description}</Card.Text>
-
-                <Card.Text>
-                    <strong>Director:</strong> {movie.director.name}<br />
-                    <strong>Bio:</strong> {movie.director.bio}
-                </Card.Text>
-
-                <Card.Text>
-                    <strong>Genre:</strong> {movie.genre.name}<br />
-                    <strong>Description:</strong> {movie.genre.description}
-                </Card.Text>
-
-                <Button variant="primary" onClick={onBackClick}>
-                    Back to Movies
-                </Button>
-            </Card.Body>
-        </Card>
-    );
+    <div>
+      <div>
+        <img className="w-100" src={movie.image} />
+      </div>
+      <div>
+        <span>Title: </span>
+        <span>{movie.title}</span>
+      </div>
+      <div>
+        <span>Description: </span>
+        <span>{movie.description}</span>
+      </div>
+      <Link to={`/`}>
+        <button className="back-button">Back</button>
+      </Link>
+    </div>
+  );
 };
 
 MovieView.propTypes = {
