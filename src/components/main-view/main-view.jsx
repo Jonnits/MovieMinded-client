@@ -3,6 +3,7 @@ import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
+import { NavigationBar } from "../navigation-bar/navigation-bar";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -33,12 +34,18 @@ export const MainView = () => {
                 featured: doc.Featured || false
             };
     });
+
             setMovies(moviesFromApi);
         });
     }, []); 
 
     return (
-        <BrowserRouter>
+    <BrowserRouter>
+      <NavigationBar
+        user={user}
+        onLoggedOut={() => {
+          setUser(null); }} 
+          />
         <Row className="justify-content-md-center g-3">
             <Routes>
                 <Route path="/signup" element={
@@ -47,11 +54,24 @@ export const MainView = () => {
                   <Navigate to="/" />
                 ) : (
                   <Col md={5}>
+                    <SignupView />
+                    </Col>
+                )}
+              </>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <>
+                {!user ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Col md={8}>
                     <LoginView onLoggedIn={(user) => setUser(user)} />
                   </Col>
                 )}
               </>
-
             }
           />
           <Route
@@ -64,12 +84,13 @@ export const MainView = () => {
                   <Col>The list is empty!</Col>
                 ) : (
                   <Col md={8}>
-                    <MovieView movies={movies} />
-                  </Col>
-                )}
-              </>
-            }
-          />
+                        <MovieView movies={movies} />
+                      </Col>
+                    )}
+                  </>
+                }
+            />
+
           <Route
             path="/"
             element={
@@ -82,7 +103,7 @@ export const MainView = () => {
                   <>
                     {movies.map((movie) => (
                       <Col className="mb-4" key={movie.id} md={3}>
-                        <MovieCardCard movie={movie} />
+                        <MovieCard movie={movie} />
                       </Col>
                     ))}
                   </>
