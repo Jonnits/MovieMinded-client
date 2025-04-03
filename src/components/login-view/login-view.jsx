@@ -9,20 +9,30 @@ export const LoginView = ({ onLoggedIn }) => {
     event.preventDefault();
 
     const data = {
-      access: username,
-      secret: password
+      Username: username, 
+      Password: password  
     };
 
     fetch("https://movieminded-d764560749d0.herokuapp.com/login", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
-    }).then((response) => {
-      if (response.ok) {
-        onLoggedIn(username);
-      } else {
-        alert("Login failed");
-      }
-    });
+    })
+      .then((response) => response.json())  
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem("token", data.token); 
+          localStorage.setItem("user", username);    
+          onLoggedIn(username, data.token);  
+        } else {
+          alert("Login failed");
+        }
+      })
+      .catch((error) => {
+        console.error("Login error:", error);
+      });
   };
 
   return (
@@ -37,7 +47,7 @@ export const LoginView = ({ onLoggedIn }) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              minlength="3"
+              minLength={3}
               placeholder="Enter username"
             />
           </Form.Group>

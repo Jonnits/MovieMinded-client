@@ -6,50 +6,81 @@ import { SignupView } from "../signup-view/signup-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"; 
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
-    const [movies, setMovies] = useState([]);
-    const [user, setUser] = useState(null); 
-    const [selectedMovie, setSelectedMovie] = useState(null);
+  const [movies, setMovies] = useState([]);
+  const [user, setUser] = useState(localStorage.getItem("user") || null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-    useEffect(() => {
-        fetch("https://movieminded-d764560749d0.herokuapp.com/movies")
-        .then((response) => response.json())
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then((data) => {
-            const moviesFromApi = data.docs.map((doc) => ({
-                id: doc.key,
-                title: doc.Title,
-                image: doc.ImagePath,
-                description: doc.Description,
-                genre: doc.Genre ? { 
-                    name: doc.Genre.Name, 
-                    description: doc.Genre.Description 
-                } : { name: "Unknown", description: "" }, 
-                director: doc.Director ? { 
-                    name: doc.Director.Name,
-                    bio: doc.Director.Bio
-                } : { name: "Unknown", bio: "" },
-                actors: doc.Actors || [],
-                featured: doc.Featured || false
-            }));
+          const moviesFromApi = data.map((doc) => ({
+            id: doc._id,
+            title: doc.Title,
+            image: doc.ImagePath,
+            description: doc.Description,
+            genre: doc.Genre
+              ? { name: doc.Genre.Name, description: doc.Genre.Description }
+              : { name: "Unknown", description: "" },
+            director: doc.Director
+              ? { name: doc.Director.Name, bio: doc.Director.Bio }
+              : { name: "Unknown", bio: "" },
+            actors: doc.Actors || [],
+            featured: doc.Featured || false,
+          }));
 
-            setMovies(moviesFromApi);
+          setMovies(moviesFromApi);
+        })
+        .catch((error) => {
+          console.error("Error fetching movies:", error);
         });
-    }, []); 
+    }
+  }, [user]); 
 
-    return (
+  const handleLoggedIn = (user, token) => {
+    setUser(user);
+    localStorage.setItem("user", user);
+    localStorage.setItem("token", token);
+  };
+
+  return (
     <BrowserRouter>
-      <NavigationBar
-        user={user}
-        onLoggedOut={() => setUser(null)} 
-      />
+      <NavigationBar user={user} onLoggedOut={() => { setUser(null); localStorage.clear(); }} />
+
       <Row className="justify-content-md-center g-3">
         <Routes>
           <Route path="/signup" element={user ? <Navigate to="/" /> : <Col md={5}><SignupView /></Col>} />
-          <Route path="/login" element={!user ? <Col md={8}><LoginView onLoggedIn={(user) => setUser(user)} /></Col> : <Navigate to="/" replace />} />
+          <Route path="/login" element={!user ? <Col md={8}><LoginView onLoggedIn={handleLoggedIn} /></Col> : <Navigate to="/" replace />} />
           <Route path="/movies/:movieId" element={!user ? <Navigate to="/login" replace /> : (movies.length === 0 ? <Col>The list is empty!</Col> : <Col md={8}><MovieView movies={movies} /></Col>)} />
-          <Route path="/" element={!user ? <Navigate to="/login" replace /> : (movies.length === 0 ? <Col>The list is empty!</Col> : movies.map((movie) => <Col className="mb-4" key={movie.id} md={3}><MovieCard movie={movie} /></Col>))} />
+          <Route
+            path="/"
+            element={!user ? (
+              <Navigate to="/login" replace />
+            ) : (
+              movies.length === 0 ? (
+                <Col>The list is empty!</Col>
+              ) : (
+                movies.map((movie) => (
+                  <Col className="mb-4" key={movie.id} md={3}>
+                    <MovieCard movie={movie} />
+                  </Col>
+                ))
+              )
+            )}
+          />
         </Routes>
       </Row>
     </BrowserRouter>
