@@ -1,31 +1,47 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, Card } from "react-bootstrap";
-import { useParams } from "react-router";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import "../../index.scss";
 
 export const MovieView = ({ movies }) => {
-    const { movieId } = useParams();
+  const { title } = useParams();
 
-    const movie = movies.find((b) => b.id === movieId);
-
-    return (
-    <div>
-      <div>
-        <img className="w-100" src={movie.image} />
-      </div>
-      <div>
-        <span>Title: </span>
-        <span>{movie.title}</span>
-      </div>
-      <div>
-        <span>Description: </span>
-        <span>{movie.description}</span>
-      </div>
-      <Link to={`/`}>
-        <button className="back-button">Back</button>
-      </Link>
-    </div>
+  // Match based on Title from backend (case-insensitive)
+  const movie = movies.find(
+    (m) => m.Title.toLowerCase() === decodeURIComponent(title).toLowerCase()
   );
+
+  if (!movie) {
+    return <div>Loading movie details...</div>;
+  }
+
+  return (
+    <Card className="my-4">
+      <Card.Img
+        variant="top"
+        src={movie.ImagePath}
+        onError={(e) => (e.target.src = "/fallback.jpg")}
+        alt={movie.Title}
+      />
+      <Card.Body>
+        <Card.Title>{movie.Title}</Card.Title>
+        <Card.Text>{movie.Description}</Card.Text>
+        <Link to="/">
+          <Button variant="primary">Back</Button>
+        </Link>
+      </Card.Body>
+    </Card>
+  );
+};
+
+MovieView.propTypes = {
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      Title: PropTypes.string.isRequired,
+      Description: PropTypes.string.isRequired,
+      ImagePath: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
