@@ -28,14 +28,14 @@ export const MainView = () => {
         })
         .then((data) => {
           const moviesFromApi = data.map((doc) => ({
-            id: doc._id,
-            title: doc.Title,
-            image: doc.ImagePath,
-            description: doc.Description,
-            genre: doc.Genre
+            _id: doc._id,
+            Title: doc.Title,
+            ImagePath: doc.ImagePath,
+            Description: doc.Description,
+            Genre: doc.Genre
               ? { name: doc.Genre.Name, description: doc.Genre.Description }
               : { name: "Unknown", description: "" },
-            director: doc.Director
+            Director: doc.Director
               ? { name: doc.Director.Name, bio: doc.Director.Bio }
               : { name: "Unknown", bio: "" },
             actors: doc.Actors || [],
@@ -93,7 +93,7 @@ export const MainView = () => {
           <Route path="/profile" element={user ? ( <Col md={8}> <ProfileView user={user} movies={movies} onUpdateProfile={handleUpdateProfile} onDeregister={handleDeregister} /> </Col>) : ( <Navigate to="/login" /> )} />
           <Route path="/signup" element={user ? <Navigate to="/" /> : <Col md={5}><SignupView /></Col>} />
           <Route path="/login" element={!user ? <Col md={8}><LoginView onLoggedIn={handleLoggedIn} /></Col> : <Navigate to="/" replace />} />
-          <Route path="/movies/:movieId" element={!user ? <Navigate to="/login" replace /> : (movies.length === 0 ? <Col>The list is empty!</Col> : <Col md={8}><MovieView movies={movies} /></Col>)} />
+          <Route path="/movies/:title" element={!user ? <Navigate to="/login" replace /> : (movies.length === 0 ? <Col>The list is empty!</Col> : <Col md={8}><MovieView movies={movies} /></Col>)} />
           <Route
             path="/"
             element={!user ? (
