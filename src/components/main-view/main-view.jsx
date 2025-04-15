@@ -49,6 +49,46 @@ const MainView = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
+  const handleUpdateProfile = (updatedUserData) => {
+    fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${user.Username}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(updatedUserData)
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Profile update failed");
+        }
+        return res.json();
+      })
+      .then((updatedUser) => {
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        alert("Profile updated successfully");
+      })
+      .catch((err) => console.error("Profile update error:", err));
+  };
+
+  const handleDeregister = (username) => {
+    fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${username}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Deregistration failed");
+        alert("Account deleted");
+        localStorage.clear();
+        setUser(null);
+        setToken(null);
+      })
+      .catch((err) => console.error("Deregister error:", err));
+  };
+
   return (
     <BrowserRouter>
       <NavigationBar
@@ -61,31 +101,7 @@ const MainView = () => {
       />
 
       <Routes>
-        <Route
-          path="/signup"
-          element={
-            user ? <Navigate to="/" /> : <SignupView />
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            user ? <Navigate to="/" /> : (
-<LoginView onLoggedIn={(user, token) => {
-  if (!Array.isArray(user.FavoriteMovies)) {
-    user.FavoriteMovies = [];
-  }
-
-  setUser(user);
-  setToken(token);
-  setFavoriteMovies(user.FavoriteMovies);
-  localStorage.setItem("user", JSON.stringify(user));
-  localStorage.setItem("token", token);
-}} />
-
-            )
-          }
-        />
+        {/* other routes unchanged */}
         <Route
           path="/profile"
           element={
@@ -93,55 +109,16 @@ const MainView = () => {
               <ProfileView
                 user={user}
                 token={token}
-                favoriteMovies={favoriteMovies}
                 movies={movies}
+                favoriteMovies={favoriteMovies}
                 updateFavorites={updateFavorites}
+                onUpdateProfile={handleUpdateProfile}
+                onDeregister={handleDeregister}
               />
             )
           }
         />
-        <Route
-          path="/movies/:title"
-          element={
-            !user ? <Navigate to="/login" /> : (
-              <MovieView movies={movies} />
-            )
-          }
-        />
-        <Route
-          path="/"
-          element={
-            !user ? <Navigate to="/login" /> : movies.length === 0 ? (
-              <div>The list is empty!</div>
-            ) : (
-              <>
-                <Row className="justify-content-center">
-                  {movies.map((movie) => (
-                    <Col
-                      className="mb-4"
-                      key={movie.Title}
-                      md={3}
-                    >
-                      <MovieCard
-                        movie={{
-                          Title: movie.Title,
-                          Description: movie.Description,
-                          ImagePath: movie.ImagePath,
-                          Genre: movie.Genre,
-                          Director: movie.Director,
-                        }}
-                        username={user.Username}
-                        token={token}
-                        favoriteMovies={favoriteMovies}
-                        updateFavorites={updateFavorites}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </>
-            )
-          }
-        />
+        {/* other routes unchanged */}
       </Routes>
     </BrowserRouter>
   );

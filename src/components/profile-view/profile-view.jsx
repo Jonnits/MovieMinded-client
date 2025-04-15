@@ -2,22 +2,29 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Form } from "react-bootstrap";
 import { MovieCard } from "../movie-card/movie-card";
 
-export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile }) => {
+export const ProfileView = ({
+  user,
+  movies,
+  token,
+  onDeregister,
+  onUpdateProfile,
+  favoriteMovies,
+  updateFavorites
+}) => {
   const [username, setUsername] = useState(user.Username);
   const [email, setEmail] = useState(user.Email);
   const [birthday, setBirthday] = useState(user.Birthday);
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [favoriteMovies, setFavoriteMovies] = useState([]);
+  const [favMoviesList, setFavMoviesList] = useState([]);
 
   useEffect(() => {
-    if (!user || !Array.isArray(user.FavoriteMovies)) return;
-
-    const favMovies = movies.filter((movie) =>
-      user.FavoriteMovies.includes(movie.Title)
+    if (!Array.isArray(favoriteMovies)) return;
+    const favs = movies.filter((movie) =>
+      favoriteMovies.includes(movie.Title)
     );
-    setFavoriteMovies(favMovies);
-  }, [movies, user]);
+    setFavMoviesList(favs);
+  }, [favoriteMovies, movies]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,23 +32,14 @@ export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile
       Username: username,
       Email: email,
       Birthday: birthday,
-      NewPassword: newPassword || password,
+      Password: password,
+      ...(newPassword && { NewPassword: newPassword })
     };
     onUpdateProfile(updatedUser);
   };
 
   const handleDeregister = () => {
     onDeregister(user.Username);
-  };
-
-  const updateFavorites = (newFavorites) => {
-    const updatedFavMovies = movies.filter((m) =>
-      newFavorites.includes(m.Title)
-    );
-    setFavoriteMovies(updatedFavMovies);
-
-    const updatedUser = { ...user, FavoriteMovies: newFavorites };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   return (
@@ -113,10 +111,10 @@ export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile
 
         <h5 className="mt-5 mb-3">Your Favorite Movies</h5>
         <div className="d-flex flex-wrap justify-content-start">
-          {favoriteMovies.length === 0 ? (
+          {favMoviesList.length === 0 ? (
             <p>You have no favorite movies yet.</p>
           ) : (
-            favoriteMovies.map((movie) => (
+            favMoviesList.map((movie) => (
               <div
                 key={movie.Title}
                 className="me-3 mb-4"
@@ -124,10 +122,16 @@ export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile
               >
                 <MovieCard
                   movie={movie}
-                  username={username}
+                  username={user.Username}
                   token={token}
-                  favoriteMovies={user.FavoriteMovies}
+                  favoriteMovies={favoriteMovies}
                   updateFavorites={updateFavorites}
+                  onRemoveFavorite={(titleToRemove) => {
+                    const newFavorites = favoriteMovies.filter(
+                      (t) => t !== titleToRemove
+                    );
+                    updateFavorites(newFavorites);
+                  }}
                 />
               </div>
             ))
