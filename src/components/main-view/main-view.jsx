@@ -13,10 +13,13 @@ const MainView = () => {
   let storedUser = null;
   try {
     storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser && !Array.isArray(storedUser.FavoriteMovies)) {
+      storedUser.FavoriteMovies = [];
+    }
   } catch (e) {
     console.warn("Invalid JSON for user in localStorage, clearing it.");
     localStorage.removeItem("user");
-  }
+  }  
   
   const storedToken = localStorage.getItem("token");  
 
@@ -68,13 +71,18 @@ const MainView = () => {
           path="/login"
           element={
             user ? <Navigate to="/" /> : (
-              <LoginView onLoggedIn={(user, token) => {
-                setUser(user);
-                setToken(token);
-                setFavoriteMovies(user.FavoriteMovies);
-                localStorage.setItem("user", JSON.stringify(user));
-                localStorage.setItem("token", token);
-              }} />
+<LoginView onLoggedIn={(user, token) => {
+  if (!Array.isArray(user.FavoriteMovies)) {
+    user.FavoriteMovies = [];
+  }
+
+  setUser(user);
+  setToken(token);
+  setFavoriteMovies(user.FavoriteMovies);
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("token", token);
+}} />
+
             )
           }
         />
@@ -111,7 +119,7 @@ const MainView = () => {
                   {movies.map((movie) => (
                     <Col
                       className="mb-4"
-                      key={movie._id}
+                      key={movie.Title}
                       md={3}
                     >
                       <MovieCard

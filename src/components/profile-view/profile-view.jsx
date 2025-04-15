@@ -11,11 +11,13 @@ export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile
   const [favoriteMovies, setFavoriteMovies] = useState([]);
 
   useEffect(() => {
+    if (!user || !Array.isArray(user.FavoriteMovies)) return;
+
     const favMovies = movies.filter((movie) =>
-      user.FavoriteMovies.includes(movie.title)
+      user.FavoriteMovies.includes(movie.Title)
     );
     setFavoriteMovies(favMovies);
-  }, [movies, user.FavoriteMovies]);
+  }, [movies, user]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -34,9 +36,12 @@ export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile
 
   const updateFavorites = (newFavorites) => {
     const updatedFavMovies = movies.filter((m) =>
-      newFavorites.includes(m.title)
+      newFavorites.includes(m.Title)
     );
     setFavoriteMovies(updatedFavMovies);
+
+    const updatedUser = { ...user, FavoriteMovies: newFavorites };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   return (
@@ -113,7 +118,7 @@ export const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile
           ) : (
             favoriteMovies.map((movie) => (
               <div
-                key={movie.id}
+                key={movie.Title}
                 className="me-3 mb-4"
                 style={{ width: "18rem" }}
               >

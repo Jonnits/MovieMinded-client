@@ -21,28 +21,30 @@ export const MovieCard = ({
     }
 
     const url = `https://movieminded-d764560749d0.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`;
-    const method = isFavorite ? 'DELETE' : 'POST';
+    const method = isFavorite ? "DELETE" : "POST";
 
     fetch(url, {
       method,
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       }
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Failed to update favorites');
+          throw new Error("Failed to update favorites");
         }
         return response.json();
       })
       .then((updatedUser) => {
         if (updateFavorites) {
+          // Sync updated favorites with local state and localStorage
           updateFavorites(updatedUser.FavoriteMovies);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
         }
       })
       .catch((error) => {
-        console.error('Error updating favorites:', error);
+        console.error("Error updating favorites:", error);
       });
   };
 
@@ -62,7 +64,9 @@ export const MovieCard = ({
           onClick={handleFavoriteToggle}
           className="mb-2"
         >
-          {isFavorite || onRemoveFavorite ? "Remove from Favorites" : "Add to Favorites"}
+          {isFavorite || onRemoveFavorite
+            ? "Remove from Favorites"
+            : "Add to Favorites"}
         </Button>
 
         <Link to={`/movies/${encodeURIComponent(movie.Title)}`}>
