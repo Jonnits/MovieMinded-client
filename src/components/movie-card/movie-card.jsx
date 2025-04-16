@@ -52,7 +52,7 @@ export const MovieCard = ({
 
     console.log(`Making ${method} request to: ${url}`);
 
-    fetch(`https://yourapp.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`, {
+    fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
