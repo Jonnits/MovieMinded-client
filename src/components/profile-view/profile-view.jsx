@@ -13,7 +13,7 @@ export const ProfileView = ({
 }) => {
   const [username, setUsername] = useState(user.Username);
   const [email, setEmail] = useState(user.Email);
-  const [birthday, setBirthday] = useState(user.Birthday);
+  const [birthday, setBirthday] = useState(user.Birthday?.split('T')[0] || '');
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [favMoviesList, setFavMoviesList] = useState([]);
@@ -21,10 +21,10 @@ export const ProfileView = ({
   useEffect(() => {
     if (!Array.isArray(favoriteMovies)) return;
     const favs = movies.filter((movie) =>
-      favoriteMovies.includes(movie.Title)
+      favoriteMovies.some((fav) => fav._id === movie._id)
     );
     setFavMoviesList(favs);
-  }, [favoriteMovies, movies]);
+  }, [favoriteMovies, movies]);  
 
   const handleSubmit = (event) => {
     event.preventDefault();

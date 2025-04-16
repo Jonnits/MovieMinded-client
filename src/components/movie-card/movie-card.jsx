@@ -32,7 +32,7 @@ export const MovieCard = ({
     console.warn("DEBUG - finalToken:", finalToken);
   }  
 
-  const isFavorite = favoriteMovies?.includes(movie.Title);
+  const isFavorite = favoriteMovies?.includes(movie._id);
 
   const handleFavoriteToggle = () => {
     if (!finalUsername || !finalToken) {
@@ -52,7 +52,7 @@ export const MovieCard = ({
 
     console.log(`Making ${method} request to: ${url}`);
 
-    fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`, {
+    fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

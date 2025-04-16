@@ -18879,7 +18879,7 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, on
         console.warn("DEBUG - finalUsername:", finalUsername);
         console.warn("DEBUG - finalToken:", finalToken);
     }
-    const isFavorite = favoriteMovies?.includes(movie.Title);
+    const isFavorite = favoriteMovies?.includes(movie._id);
     const handleFavoriteToggle = ()=>{
         if (!finalUsername || !finalToken) {
             console.error("Username or token is missing!");
@@ -18894,7 +18894,7 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, on
         const url = `https://movieminded-d764560749d0.herokuapp.com/users/${finalUsername}/movies/${encodedTitle}`;
         const method = isFavorite ? "DELETE" : "POST";
         console.log(`Making ${method} request to: ${url}`);
-        fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`, {
+        fetch(url, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -27812,13 +27812,13 @@ const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile, favor
     _s();
     const [username, setUsername] = (0, _react.useState)(user.Username);
     const [email, setEmail] = (0, _react.useState)(user.Email);
-    const [birthday, setBirthday] = (0, _react.useState)(user.Birthday);
+    const [birthday, setBirthday] = (0, _react.useState)(user.Birthday?.split('T')[0] || '');
     const [password, setPassword] = (0, _react.useState)("");
     const [newPassword, setNewPassword] = (0, _react.useState)("");
     const [favMoviesList, setFavMoviesList] = (0, _react.useState)([]);
     (0, _react.useEffect)(()=>{
         if (!Array.isArray(favoriteMovies)) return;
-        const favs = movies.filter((movie)=>favoriteMovies.includes(movie.Title));
+        const favs = movies.filter((movie)=>favoriteMovies.some((fav)=>fav._id === movie._id));
         setFavMoviesList(favs);
     }, [
         favoriteMovies,
@@ -28072,7 +28072,7 @@ const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile, favor
         columnNumber: 5
     }, undefined);
 };
-_s(ProfileView, "qBaLLRoOLZodsqoUQE4hUdJXg7o=");
+_s(ProfileView, "+hzzfg5osd7Fg6NVGrWdIgZsVKk=");
 _c = ProfileView;
 var _c;
 $RefreshReg$(_c, "ProfileView");
