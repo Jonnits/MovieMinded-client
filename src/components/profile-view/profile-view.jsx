@@ -24,7 +24,7 @@ export const ProfileView = ({
       favoriteMovies.some((fav) => fav._id === movie._id)
     );
     setFavMoviesList(favs);
-  }, [favoriteMovies, movies]);  
+  }, [favoriteMovies, movies]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -40,6 +40,25 @@ export const ProfileView = ({
 
   const handleDeregister = () => {
     onDeregister(user.Username);
+  };
+
+  const handleRemoveFavorite = (title) => {
+    fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${user.Username}/movies/${encodeURIComponent(title)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to remove favorite movie.");
+        }
+        return response.json();
+      })
+      .then((updatedUser) => {
+        updateFavorites(updatedUser.FavoriteMovies || []);
+      })
+      .catch((error) => {
+        console.error("Error removing favorite movie:", error);
+      });
   };
 
   return (
@@ -116,7 +135,7 @@ export const ProfileView = ({
           ) : (
             favMoviesList.map((movie) => (
               <div
-                key={movie.Title}
+                key={movie._id}
                 className="me-3 mb-4"
                 style={{ width: "18rem" }}
               >
@@ -126,13 +145,15 @@ export const ProfileView = ({
                   token={token}
                   favoriteMovies={favoriteMovies}
                   updateFavorites={updateFavorites}
-                  onRemoveFavorite={(titleToRemove) => {
-                    const newFavorites = favoriteMovies.filter(
-                      (t) => t !== titleToRemove
-                    );
-                    updateFavorites(newFavorites);
-                  }}
+                  inFavoritesView={true}
                 />
+                <Button
+                  variant="outline-danger"
+                  className="mt-2 w-100"
+                  onClick={() => handleRemoveFavorite(movie.Title)}
+                >
+                  Remove from Favorites
+                </Button>
               </div>
             ))
           )}

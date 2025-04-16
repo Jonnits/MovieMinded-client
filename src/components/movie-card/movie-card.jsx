@@ -10,27 +10,28 @@ export const MovieCard = ({
   token,
   favoriteMovies,
   updateFavorites,
-  onRemoveFavorite
+  onRemoveFavorite,
+  inFavoritesView = false
 }) => {
   let userFromStorage = null;
   let tokenFromStorage = null;
-  
+
   try {
     const rawUser = localStorage.getItem("user");
     userFromStorage = rawUser ? JSON.parse(rawUser) : null;
   } catch (error) {
     console.error("Failed to parse user from localStorage", error);
   }
-  
+
   tokenFromStorage = localStorage.getItem("token");
-  
+
   const finalUsername = username || userFromStorage?.Username;
   const finalToken = token || tokenFromStorage;
-  
+
   if (!finalUsername || !finalToken) {
     console.warn("DEBUG - finalUsername:", finalUsername);
     console.warn("DEBUG - finalToken:", finalToken);
-  }  
+  }
 
   const isFavorite = favoriteMovies?.includes(movie._id);
 
@@ -53,13 +54,12 @@ export const MovieCard = ({
     console.log(`Making ${method} request to: ${url}`);
 
     fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       }
     })
-    
       .then((response) => {
         console.log("Response status:", response.status);
         if (!response.ok) {
@@ -90,15 +90,25 @@ export const MovieCard = ({
         <Card.Title>{movie.Title}</Card.Title>
         <Card.Text>{movie.Description}</Card.Text>
 
-        <Button
-          variant={isFavorite || onRemoveFavorite ? "danger" : "success"}
-          onClick={handleFavoriteToggle}
-          className="mb-2"
-        >
-          {isFavorite || onRemoveFavorite
-            ? "Remove from Favorites"
-            : "Add to Favorites"}
-        </Button>
+        {!inFavoritesView && !onRemoveFavorite && (
+          <Button
+            variant={isFavorite ? "danger" : "success"}
+            onClick={handleFavoriteToggle}
+            className="mb-2"
+          >
+            {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+          </Button>
+        )}
+
+        {inFavoritesView && onRemoveFavorite && (
+          <Button
+            variant="danger"
+            onClick={handleFavoriteToggle}
+            className="mb-2"
+          >
+            Remove from Favorites
+          </Button>
+        )}
 
         <Link to={`/movies/${encodeURIComponent(movie.Title)}`}>
           <Button variant="primary">Open</Button>
@@ -127,5 +137,6 @@ MovieCard.propTypes = {
   token: PropTypes.string,
   favoriteMovies: PropTypes.array,
   updateFavorites: PropTypes.func,
-  onRemoveFavorite: PropTypes.func
+  onRemoveFavorite: PropTypes.func,
+  inFavoritesView: PropTypes.bool
 };
