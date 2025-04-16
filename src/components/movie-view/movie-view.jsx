@@ -48,6 +48,7 @@ export const MovieView = ({ movies }) => {
         <hr />
         <Card.Text><strong>Actors:</strong> {movie.Actors?.join(", ")}</Card.Text>
         <Link to="/">
+        
           <Button variant="primary">Back</Button>
         </Link>
       </Card.Body>

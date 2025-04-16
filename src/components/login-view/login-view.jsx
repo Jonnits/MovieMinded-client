@@ -29,8 +29,8 @@ export const LoginView = ({ onLoggedIn }) => {
       const result = await response.json();
       if (result.token) {
         localStorage.setItem("token", result.token);
-        localStorage.setItem("user", result.user.Username);
-        onLoggedIn(result.user.Username, result.token);
+        localStorage.setItem("user", JSON.stringify(result.user));
+        onLoggedIn(result.user, result.token);
       } else {
         alert("Login failed: Token not received.");
       }

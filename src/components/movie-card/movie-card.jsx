@@ -12,33 +12,64 @@ export const MovieCard = ({
   updateFavorites,
   onRemoveFavorite
 }) => {
+  let userFromStorage = null;
+  let tokenFromStorage = null;
+  
+  try {
+    const rawUser = localStorage.getItem("user");
+    userFromStorage = rawUser ? JSON.parse(rawUser) : null;
+  } catch (error) {
+    console.error("Failed to parse user from localStorage", error);
+  }
+  
+  tokenFromStorage = localStorage.getItem("token");
+  
+  const finalUsername = username || userFromStorage?.Username;
+  const finalToken = token || tokenFromStorage;
+  
+  if (!finalUsername || !finalToken) {
+    console.warn("DEBUG - finalUsername:", finalUsername);
+    console.warn("DEBUG - finalToken:", finalToken);
+  }  
+
   const isFavorite = favoriteMovies?.includes(movie.Title);
 
   const handleFavoriteToggle = () => {
+    if (!finalUsername || !finalToken) {
+      console.error("Username or token is missing!");
+      return;
+    }
+
     if (onRemoveFavorite) {
+      console.log(`Removing favorite: ${movie.Title}`);
       onRemoveFavorite(movie.Title);
       return;
     }
 
-    const url = `https://movieminded-d764560749d0.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`;
+    const encodedTitle = encodeURIComponent(movie.Title);
+    const url = `https://movieminded-d764560749d0.herokuapp.com/users/${finalUsername}/movies/${encodedTitle}`;
     const method = isFavorite ? "DELETE" : "POST";
 
-    fetch(url, {
-      method,
+    console.log(`Making ${method} request to: ${url}`);
+
+    fetch(`https://yourapp.herokuapp.com/users/${username}/movies/${encodeURIComponent(movie.Title)}`, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       }
     })
+    
       .then((response) => {
+        console.log("Response status:", response.status);
         if (!response.ok) {
           throw new Error("Failed to update favorites");
         }
         return response.json();
       })
       .then((updatedUser) => {
+        console.log("Updated user object received:", updatedUser);
         if (updateFavorites) {
-          // Sync updated favorites with local state and localStorage
           updateFavorites(updatedUser.FavoriteMovies);
           localStorage.setItem("user", JSON.stringify(updatedUser));
         }
