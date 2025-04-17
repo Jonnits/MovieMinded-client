@@ -147,13 +147,6 @@ export const ProfileView = ({
                   updateFavorites={updateFavorites}
                   inFavoritesView={true}
                 />
-                <Button
-                  variant="outline-danger"
-                  className="mt-2 w-100"
-                  onClick={() => handleRemoveFavorite(movie.Title)}
-                >
-                  Remove from Favorites
-                </Button>
               </div>
             ))
           )}

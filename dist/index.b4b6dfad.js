@@ -18863,7 +18863,7 @@ var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactBootstrap = require("react-bootstrap");
 var _reactRouterDom = require("react-router-dom");
 var _indexScss = require("../../index.scss");
-const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, onRemoveFavorite, inFavoritesView = false })=>{
+const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites })=>{
     let userFromStorage = null;
     let tokenFromStorage = null;
     try {
@@ -18879,33 +18879,25 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, on
         console.warn("DEBUG - finalUsername:", finalUsername);
         console.warn("DEBUG - finalToken:", finalToken);
     }
-    const isFavorite = favoriteMovies?.includes(movie._id);
+    const isFavorite = favoriteMovies?.some((fav)=>typeof fav === "string" ? fav === movie._id : fav._id === movie._id);
     const handleFavoriteToggle = ()=>{
         if (!finalUsername || !finalToken) {
             console.error("Username or token is missing!");
             return;
         }
-        if (onRemoveFavorite) {
-            console.log(`Removing favorite: ${movie.Title}`);
-            onRemoveFavorite(movie.Title);
-            return;
-        }
         const encodedTitle = encodeURIComponent(movie.Title);
         const url = `https://movieminded-d764560749d0.herokuapp.com/users/${finalUsername}/movies/${encodedTitle}`;
         const method = isFavorite ? "DELETE" : "POST";
-        console.log(`Making ${method} request to: ${url}`);
         fetch(url, {
-            method: "POST",
+            method,
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${finalToken}`,
                 "Content-Type": "application/json"
             }
         }).then((response)=>{
-            console.log("Response status:", response.status);
             if (!response.ok) throw new Error("Failed to update favorites");
             return response.json();
         }).then((updatedUser)=>{
-            console.log("Updated user object received:", updatedUser);
             if (updateFavorites) {
                 updateFavorites(updatedUser.FavoriteMovies);
                 localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -18923,7 +18915,7 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, on
                 onError: (e)=>e.target.src = "/fallback.jpg"
             }, void 0, false, {
                 fileName: "src/components/movie-card/movie-card.jsx",
-                lineNumber: 84,
+                lineNumber: 74,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Body, {
@@ -18932,35 +18924,25 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, on
                         children: movie.Title
                     }, void 0, false, {
                         fileName: "src/components/movie-card/movie-card.jsx",
-                        lineNumber: 90,
+                        lineNumber: 80,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Card).Text, {
                         children: movie.Description
                     }, void 0, false, {
                         fileName: "src/components/movie-card/movie-card.jsx",
-                        lineNumber: 91,
+                        lineNumber: 81,
                         columnNumber: 9
                     }, undefined),
-                    !inFavoritesView && !onRemoveFavorite && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
                         variant: isFavorite ? "danger" : "success",
                         onClick: handleFavoriteToggle,
                         className: "mb-2",
                         children: isFavorite ? "Remove from Favorites" : "Add to Favorites"
                     }, void 0, false, {
                         fileName: "src/components/movie-card/movie-card.jsx",
-                        lineNumber: 94,
-                        columnNumber: 11
-                    }, undefined),
-                    inFavoritesView && onRemoveFavorite && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
-                        variant: "danger",
-                        onClick: handleFavoriteToggle,
-                        className: "mb-2",
-                        children: "Remove from Favorites"
-                    }, void 0, false, {
-                        fileName: "src/components/movie-card/movie-card.jsx",
-                        lineNumber: 104,
-                        columnNumber: 11
+                        lineNumber: 83,
+                        columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactRouterDom.Link), {
                         to: `/movies/${encodeURIComponent(movie.Title)}`,
@@ -18969,24 +18951,24 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites, on
                             children: "Open"
                         }, void 0, false, {
                             fileName: "src/components/movie-card/movie-card.jsx",
-                            lineNumber: 114,
+                            lineNumber: 92,
                             columnNumber: 11
                         }, undefined)
                     }, void 0, false, {
                         fileName: "src/components/movie-card/movie-card.jsx",
-                        lineNumber: 113,
+                        lineNumber: 91,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/movie-card/movie-card.jsx",
-                lineNumber: 89,
+                lineNumber: 79,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/movie-card/movie-card.jsx",
-        lineNumber: 83,
+        lineNumber: 73,
         columnNumber: 5
     }, undefined);
 };
@@ -19009,9 +18991,7 @@ MovieCard.propTypes = {
     username: (0, _propTypesDefault.default).string,
     token: (0, _propTypesDefault.default).string,
     favoriteMovies: (0, _propTypesDefault.default).array,
-    updateFavorites: (0, _propTypesDefault.default).func,
-    onRemoveFavorite: (0, _propTypesDefault.default).func,
-    inFavoritesView: (0, _propTypesDefault.default).bool
+    updateFavorites: (0, _propTypesDefault.default).func
 };
 var _c;
 $RefreshReg$(_c, "MovieCard");
@@ -28061,31 +28041,19 @@ const ProfileView = ({ user, movies, token, onDeregister, onUpdateProfile, favor
                             style: {
                                 width: "18rem"
                             },
-                            children: [
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCard.MovieCard), {
-                                    movie: movie,
-                                    username: user.Username,
-                                    token: token,
-                                    favoriteMovies: favoriteMovies,
-                                    updateFavorites: updateFavorites,
-                                    inFavoritesView: true
-                                }, void 0, false, {
-                                    fileName: "src/components/profile-view/profile-view.jsx",
-                                    lineNumber: 142,
-                                    columnNumber: 17
-                                }, undefined),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
-                                    variant: "outline-danger",
-                                    className: "mt-2 w-100",
-                                    onClick: ()=>handleRemoveFavorite(movie.Title),
-                                    children: "Remove from Favorites"
-                                }, void 0, false, {
-                                    fileName: "src/components/profile-view/profile-view.jsx",
-                                    lineNumber: 150,
-                                    columnNumber: 17
-                                }, undefined)
-                            ]
-                        }, movie._id, true, {
+                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCard.MovieCard), {
+                                movie: movie,
+                                username: user.Username,
+                                token: token,
+                                favoriteMovies: favoriteMovies,
+                                updateFavorites: updateFavorites,
+                                inFavoritesView: true
+                            }, void 0, false, {
+                                fileName: "src/components/profile-view/profile-view.jsx",
+                                lineNumber: 142,
+                                columnNumber: 17
+                            }, undefined)
+                        }, movie._id, false, {
                             fileName: "src/components/profile-view/profile-view.jsx",
                             lineNumber: 137,
                             columnNumber: 15

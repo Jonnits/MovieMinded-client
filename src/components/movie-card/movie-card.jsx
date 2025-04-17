@@ -9,9 +9,7 @@ export const MovieCard = ({
   username,
   token,
   favoriteMovies,
-  updateFavorites,
-  onRemoveFavorite,
-  inFavoritesView = false
+  updateFavorites
 }) => {
   let userFromStorage = null;
   let tokenFromStorage = null;
@@ -33,7 +31,9 @@ export const MovieCard = ({
     console.warn("DEBUG - finalToken:", finalToken);
   }
 
-  const isFavorite = favoriteMovies?.includes(movie._id);
+  const isFavorite = favoriteMovies?.some(
+    (fav) => (typeof fav === "string" ? fav === movie._id : fav._id === movie._id)
+  );  
 
   const handleFavoriteToggle = () => {
     if (!finalUsername || !finalToken) {
@@ -41,34 +41,24 @@ export const MovieCard = ({
       return;
     }
 
-    if (onRemoveFavorite) {
-      console.log(`Removing favorite: ${movie.Title}`);
-      onRemoveFavorite(movie.Title);
-      return;
-    }
-
     const encodedTitle = encodeURIComponent(movie.Title);
     const url = `https://movieminded-d764560749d0.herokuapp.com/users/${finalUsername}/movies/${encodedTitle}`;
     const method = isFavorite ? "DELETE" : "POST";
 
-    console.log(`Making ${method} request to: ${url}`);
-
     fetch(url, {
-      method: "POST",
+      method,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${finalToken}`,
         "Content-Type": "application/json"
       }
     })
       .then((response) => {
-        console.log("Response status:", response.status);
         if (!response.ok) {
           throw new Error("Failed to update favorites");
         }
         return response.json();
       })
       .then((updatedUser) => {
-        console.log("Updated user object received:", updatedUser);
         if (updateFavorites) {
           updateFavorites(updatedUser.FavoriteMovies);
           localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -90,25 +80,13 @@ export const MovieCard = ({
         <Card.Title>{movie.Title}</Card.Title>
         <Card.Text>{movie.Description}</Card.Text>
 
-        {!inFavoritesView && !onRemoveFavorite && (
-          <Button
-            variant={isFavorite ? "danger" : "success"}
-            onClick={handleFavoriteToggle}
-            className="mb-2"
-          >
-            {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-          </Button>
-        )}
-
-        {inFavoritesView && onRemoveFavorite && (
-          <Button
-            variant="danger"
-            onClick={handleFavoriteToggle}
-            className="mb-2"
-          >
-            Remove from Favorites
-          </Button>
-        )}
+        <Button
+          variant={isFavorite ? "danger" : "success"}
+          onClick={handleFavoriteToggle}
+          className="mb-2"
+        >
+          {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+        </Button>
 
         <Link to={`/movies/${encodeURIComponent(movie.Title)}`}>
           <Button variant="primary">Open</Button>
@@ -136,7 +114,5 @@ MovieCard.propTypes = {
   username: PropTypes.string,
   token: PropTypes.string,
   favoriteMovies: PropTypes.array,
-  updateFavorites: PropTypes.func,
-  onRemoveFavorite: PropTypes.func,
-  inFavoritesView: PropTypes.bool
+  updateFavorites: PropTypes.func
 };
