@@ -1,40 +1,47 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 
-export const SignupView = () => {
+export const SignupView = ({ onSignupSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const data = {
       Username: username,
       Password: password,
       Email: email,
-      Birthday: birthday ? new Date(birthday).toISOString() : null
+      Birthday: birthday
     };
 
-    fetch("https://movieminded-d764560749d0.herokuapp.com/users", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      }
-    })
-    .then(async (response) => {
-      const responseData = await response.json(); 
+    try {
+      const response = await fetch("https://movieminded-d764560749d0.herokuapp.com/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      const responseData = await response.json();
       if (response.ok) {
-        alert("Signup successful");
-        window.location.reload();
+        alert("Signup successful. You may now log in.");
+        if (onSignupSuccess) {
+          onSignupSuccess(); 
+        } else {
+          window.location.reload(); 
+        }
       } else {
-        alert(`Signup failed: ${responseData.message || "Unknown error"}`);
+        alert(`Signup failed: ${responseData.errors?.[0]?.msg || responseData.message || "Unknown error"}`);
       }
-    })
-    .catch((error) => console.error("Signup error:", error));
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("An unexpected error occurred during signup.");
+    }
   };
 
   return (
@@ -43,41 +50,41 @@ export const SignupView = () => {
         <Card.Title className="text-center">Sign Up</Card.Title>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formUsername" className="mb-3">
-            <Form.Label>Username</Form.Label>
+            <Form.Label>Username:</Form.Label>
             <Form.Control
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              minLength="3"
-              placeholder="Enter username"
+              minLength={3}
+              placeholder="Choose a username"
             />
           </Form.Group>
 
           <Form.Group controlId="formPassword" className="mb-3">
-            <Form.Label>Password</Form.Label>
+            <Form.Label>Password:</Form.Label>
             <Form.Control
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Enter password"
+              placeholder="Enter a secure password"
             />
           </Form.Group>
 
           <Form.Group controlId="formEmail" className="mb-3">
-            <Form.Label>Email</Form.Label>
+            <Form.Label>Email:</Form.Label>
             <Form.Control
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="Enter email"
+              placeholder="Enter your email"
             />
           </Form.Group>
 
           <Form.Group controlId="formBirthday" className="mb-3">
-            <Form.Label>Birthday</Form.Label>
+            <Form.Label>Birthday:</Form.Label>
             <Form.Control
               type="date"
               value={birthday}
@@ -86,7 +93,7 @@ export const SignupView = () => {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="w-100">
+          <Button variant="success" type="submit" className="w-100">
             Sign Up
           </Button>
         </Form>
