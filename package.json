@@ -26,7 +26,8 @@
     "react-dom": "^19.0.0",
     "react-router": "6.3.0",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "4.0.0"
+    "react-scripts": "4.0.0",
+    "redux": "^4.2.0"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.13.3",
