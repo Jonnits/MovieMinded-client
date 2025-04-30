@@ -1,9 +1,67 @@
-$color: steelblue;
-$primary: #6f42c1;
-$body-bg: rgb(234, 234, 234);
+@import "bootstrap/scss/bootstrap";
 
-@import '~bootstrap/scss/bootstrap.scss';
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: #343a40;
+}
 
-.my-flix {
-  color: $color;
+body {
+  min-height: 100vh;
+  color: #fff;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #343a40;
+}
+
+.container {
+  background-color: #343a40;
+  color: #000000;
+}
+
+.card {
+  background-color: #495057;
+  color: #ffffff;
+}
+
+.navbar.custom-navbar {
+  background-color: #000000;
+  border: none;
+  padding: 0.5rem 1rem;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  
+  .navbar-brand {
+    color: #ffffff;
+    &:hover {
+      color: #ffffff;
+    }
+  }
+  
+  .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  
+  .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    &:hover {
+      color: #ffffff;
+    }
+  }
+
+  .container {
+    background-color: transparent;
+  }
 }
