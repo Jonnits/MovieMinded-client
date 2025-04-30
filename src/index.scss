@@ -65,3 +65,13 @@ body {
     background-color: transparent;
   }
 }
+
+.btn-primary:not(.btn-success):not(.btn-danger) {
+  background-color: #0a6b75;
+  border-color: #0a6b75;
+  
+  &:hover, &:focus {
+    background-color: #085057;
+    border-color: #085057;
+  }
+}

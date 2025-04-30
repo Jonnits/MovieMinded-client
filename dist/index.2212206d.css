@@ -7252,6 +7252,16 @@ body {
   background-color: #0000;
 }
 
+.btn-primary:not(.btn-success):not(.btn-danger) {
+  background-color: #0a6b75;
+  border-color: #0a6b75;
+}
+
+.btn-primary:not(.btn-success):not(.btn-danger):hover, .btn-primary:not(.btn-success):not(.btn-danger):focus {
+  background-color: #085057;
+  border-color: #085057;
+}
+
 :root, [data-bs-theme="light"] {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;

@@ -83,13 +83,13 @@ export const MovieCard = ({
         <Button
           variant={isFavorite ? "danger" : "success"}
           onClick={handleFavoriteToggle}
-          className="mb-2"
+          className="mb-2 w-100"
         >
           {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
         </Button>
 
         <Link to={`/movies/${encodeURIComponent(movie.Title)}`}>
-          <Button variant="primary">Open</Button>
+          <Button variant="primary" className="w-100">Open</Button>
         </Link>
       </Card.Body>
     </Card>

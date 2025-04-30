@@ -18937,7 +18937,7 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites })=
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
                         variant: isFavorite ? "danger" : "success",
                         onClick: handleFavoriteToggle,
-                        className: "mb-2",
+                        className: "mb-2 w-100",
                         children: isFavorite ? "Remove from Favorites" : "Add to Favorites"
                     }, void 0, false, {
                         fileName: "src/components/movie-card/movie-card.jsx",
@@ -18948,6 +18948,7 @@ const MovieCard = ({ movie, username, token, favoriteMovies, updateFavorites })=
                         to: `/movies/${encodeURIComponent(movie.Title)}`,
                         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactBootstrap.Button), {
                             variant: "primary",
+                            className: "w-100",
                             children: "Open"
                         }, void 0, false, {
                             fileName: "src/components/movie-card/movie-card.jsx",
