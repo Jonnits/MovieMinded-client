@@ -4,19 +4,8 @@ import { Button, Card } from "react-bootstrap";
 import { useParams, Link } from "react-router-dom";
 import "../../index.scss";
 
-export const MovieView = ({ movies }) => {
+export const MovieView = ({ movies, username, token, favoriteMovies, updateFavorites }) => {
   const { title } = useParams();
-
-  console.log("MovieView mounted");
-  console.log("URL title param:", title);
-  console.log("Movies prop:", movies);
-
-  if (Array.isArray(movies)) {
-    movies.forEach((m, i) =>
-      console.log(`Movie ${i + 1}: ${m.Title}`)
-    );
-  }
-
   const movie = Array.isArray(movies)
     ? movies.find(
         (m) =>
@@ -28,6 +17,44 @@ export const MovieView = ({ movies }) => {
   if (!movie) {
     return <div>Loading movie details...</div>;
   }
+
+  const isFavorite = favoriteMovies?.some(
+    (fav) => (typeof fav === "string" ? fav === movie._id : fav._id === movie._id)
+  );
+
+  const handleFavoriteToggle = () => {
+    if (!username || !token) {
+      console.error("Username or token is missing!");
+      return;
+    }
+
+    const encodedTitle = encodeURIComponent(movie.Title);
+    const url = `https://movieminded-d764560749d0.herokuapp.com/users/${username}/movies/${encodedTitle}`;
+    const method = isFavorite ? "DELETE" : "POST";
+
+    fetch(url, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to update favorites");
+        }
+        return response.json();
+      })
+      .then((updatedUser) => {
+        if (updateFavorites) {
+          updateFavorites(updatedUser.FavoriteMovies);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating favorites:", error);
+      });
+  };
 
   return (
     <Card className="my-4">
@@ -47,10 +74,17 @@ export const MovieView = ({ movies }) => {
         <Card.Text><strong>Bio:</strong> {movie.Director?.Bio}</Card.Text>
         <hr />
         <Card.Text><strong>Actors:</strong> {movie.Actors?.join(", ")}</Card.Text>
-        <Link to="/">
-        
-          <Button variant="primary">Back</Button>
-        </Link>
+        <div className="d-flex justify-content-between mt-3">
+          <Link to="/">
+            <Button variant="primary">Back</Button>
+          </Link>
+          <Button
+            variant={isFavorite ? "danger" : "success"}
+            onClick={handleFavoriteToggle}
+          >
+            {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );
@@ -71,6 +105,11 @@ MovieView.propTypes = {
         Bio: PropTypes.string
       }),
       Actors: PropTypes.arrayOf(PropTypes.string),
+      _id: PropTypes.string.isRequired,
     })
   ).isRequired,
+  username: PropTypes.string.isRequired,
+  token: PropTypes.string.isRequired,
+  favoriteMovies: PropTypes.arrayOf(PropTypes.string).isRequired,
+  updateFavorites: PropTypes.func.isRequired,
 };

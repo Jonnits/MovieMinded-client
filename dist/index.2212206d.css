@@ -1,3 +1,4 @@
+@import "https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap";
 *, :before, :after {
   box-sizing: border-box;
 }
@@ -7216,6 +7217,13 @@ body {
   background-color: #495057;
 }
 
+.card-title, .movie-title {
+  color: #fff;
+  font-family: Crimson Pro, serif;
+  font-size: 1.5rem;
+  font-weight: 1000;
+}
+
 .navbar.custom-navbar {
   background-color: #000;
   border: none;
@@ -7228,7 +7236,14 @@ body {
   right: 50%;
 }
 
-.navbar.custom-navbar .navbar-brand, .navbar.custom-navbar .navbar-brand:hover {
+.navbar.custom-navbar .navbar-brand {
+  color: #fff;
+  font-family: Crimson Pro, serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.navbar.custom-navbar .navbar-brand:hover {
   color: #fff;
 }
 

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap');
 @import "bootstrap/scss/bootstrap";
 
 html, body {
@@ -29,6 +30,13 @@ body {
   color: #ffffff;
 }
 
+.card-title, .movie-title {
+  font-family: 'Crimson Pro', serif;
+  font-weight: 1000;
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
 .navbar.custom-navbar {
   background-color: #000000;
   border: none;
@@ -42,6 +50,9 @@ body {
   
   .navbar-brand {
     color: #ffffff;
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
     &:hover {
       color: #ffffff;
     }

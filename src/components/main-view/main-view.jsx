@@ -150,7 +150,13 @@ const MainView = () => {
             !user ? (
               <Navigate to="/login" />
             ) : (
-              <MovieView movies={movies} />
+              <MovieView 
+                movies={movies}
+                username={user.Username}
+                token={token}
+                favoriteMovies={favoriteMovies}
+                updateFavorites={updateFavorites}
+              />
             )
           }
         />
