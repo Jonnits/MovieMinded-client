@@ -32,6 +32,7 @@ const MainView = () => {
   const [favoriteMovies, setFavoriteMovies] = useState(
     storedUser?.FavoriteMovies || []
   );
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -45,6 +46,14 @@ const MainView = () => {
         console.error("Error fetching movies:", error)
       );
   }, [token]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const filteredMovies = movies.filter((movie) =>
+    movie.Title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleLoggedIn = (user, token) => {
     if (!Array.isArray(user.FavoriteMovies)) {
@@ -62,6 +71,7 @@ const MainView = () => {
     setUser(null);
     setToken(null);
     setFavoriteMovies([]);
+    setSearchQuery("");
     localStorage.clear();
   };
 
@@ -109,71 +119,18 @@ const MainView = () => {
 
   return (
     <BrowserRouter>
-      <NavigationBar user={user} onLoggedOut={handleLoggedOut} />
-
+      <NavigationBar user={user} onLoggedOut={handleLoggedOut} onSearch={handleSearch} />
       <Routes>
-        <Route
-          path="/signup"
-          element={user ? <Navigate to="/" /> : <SignupView />}
-        />
-        <Route
-          path="/login"
-          element={
-            user ? (
-              <Navigate to="/" />
-            ) : (
-              <LoginView onLoggedIn={handleLoggedIn} />
-            )
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            !user ? (
-              <Navigate to="/login" />
-            ) : (
-              <ProfileView
-                user={user}
-                token={token}
-                favoriteMovies={favoriteMovies}
-                movies={movies}
-                updateFavorites={updateFavorites}
-                onUpdateProfile={handleUpdateProfile}
-                onDeregister={handleDeregister}
-              />
-            )
-          }
-        />
-        <Route
-          path="/movies/:title"
-          element={
-            !user ? (
-              <Navigate to="/login" />
-            ) : (
-              <MovieView 
-                movies={movies}
-                username={user.Username}
-                token={token}
-                favoriteMovies={favoriteMovies}
-                updateFavorites={updateFavorites}
-              />
-            )
-          }
-        />
         <Route
           path="/"
           element={
-            !user ? (
-              <Navigate to="/login" />
-            ) : movies.length === 0 ? (
-              <div>The list is empty!</div>
-            ) : (
+            user ? (
               <Row className="justify-content-center">
-                {movies.map((movie) => (
-                  <Col className="mb-4" key={movie._id} md={3}>
+                {filteredMovies.map((movie) => (
+                  <Col className="mb-4" key={movie._id} xs={12} sm={6} md={4} lg={3} xl={2}>
                     <MovieCard
                       movie={movie}
-                      username={user.Username}
+                      user={user}
                       token={token}
                       favoriteMovies={favoriteMovies}
                       updateFavorites={updateFavorites}
@@ -181,6 +138,62 @@ const MainView = () => {
                   </Col>
                 ))}
               </Row>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/movies/:movieId"
+          element={
+            user ? (
+              <MovieView
+                movies={movies}
+                username={user.Username}
+                token={token}
+                favoriteMovies={favoriteMovies}
+                updateFavorites={updateFavorites}
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            user ? (
+              <ProfileView
+                user={user}
+                token={token}
+                movies={movies}
+                favoriteMovies={favoriteMovies}
+                updateFavorites={updateFavorites}
+                onUpdateProfile={handleUpdateProfile}
+                onDeregister={handleDeregister}
+              />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            user ? (
+              <Navigate to="/" replace />
+            ) : (
+              <LoginView onLoggedIn={handleLoggedIn} />
+            )
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            user ? (
+              <Navigate to="/" replace />
+            ) : (
+              <SignupView />
             )
           }
         />

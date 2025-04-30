@@ -5,12 +5,12 @@ import { useParams, Link } from "react-router-dom";
 import "../../index.scss";
 
 export const MovieView = ({ movies, username, token, favoriteMovies, updateFavorites }) => {
-  const { title } = useParams();
+  const { movieId } = useParams();
   const movie = Array.isArray(movies)
     ? movies.find(
         (m) =>
           m?.Title &&
-          m.Title.toLowerCase() === decodeURIComponent(title).toLowerCase()
+          m.Title.toLowerCase() === decodeURIComponent(movieId).toLowerCase()
       )
     : null;
 

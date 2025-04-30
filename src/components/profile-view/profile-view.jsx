@@ -42,25 +42,6 @@ export const ProfileView = ({
     onDeregister(user.Username);
   };
 
-  const handleRemoveFavorite = (title) => {
-    fetch(`https://movieminded-d764560749d0.herokuapp.com/users/${user.Username}/movies/${encodeURIComponent(title)}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to remove favorite movie.");
-        }
-        return response.json();
-      })
-      .then((updatedUser) => {
-        updateFavorites(updatedUser.FavoriteMovies || []);
-      })
-      .catch((error) => {
-        console.error("Error removing favorite movie:", error);
-      });
-  };
-
   return (
     <Card className="p-4 shadow-sm mt-4">
       <Card.Body>
@@ -145,7 +126,6 @@ export const ProfileView = ({
                   token={token}
                   favoriteMovies={favoriteMovies}
                   updateFavorites={updateFavorites}
-                  inFavoritesView={true}
                 />
               </div>
             ))

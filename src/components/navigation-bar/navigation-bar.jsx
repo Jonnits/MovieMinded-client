@@ -1,14 +1,25 @@
 import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-export const NavigationBar = ({ user, onLoggedOut }) => {
+export const NavigationBar = ({ user, onLoggedOut, onSearch }) => {
   return (
     <Navbar className="custom-navbar" expand="lg">
       <div className="container">
         <Navbar.Brand as={Link} to="/">MovieMinded</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
+          {user && (
+            <Form className="d-flex mx-auto">
+              <Form.Control
+                type="search"
+                placeholder="Which movies move you?"
+                className="me-2"
+                aria-label="Search"
+                onChange={(e) => onSearch(e.target.value)}
+              />
+            </Form>
+          )}
           <Nav className="ms-auto">
             {user ? (
               <>
