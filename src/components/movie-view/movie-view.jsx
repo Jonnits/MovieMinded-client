@@ -73,7 +73,6 @@ export const MovieView = ({ movies, username, token, favoriteMovies, updateFavor
         <Card.Text><strong>Director:</strong> {movie.Director?.Name}</Card.Text>
         <Card.Text><strong>Bio:</strong> {movie.Director?.Bio}</Card.Text>
         <hr />
-        <Card.Text><strong>Actors:</strong> {movie.Actors?.join(", ")}</Card.Text>
         <div className="d-flex justify-content-between mt-3">
           <Link to="/">
             <Button variant="primary">Back</Button>
