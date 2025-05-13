@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 export const SignupView = ({ onSignupSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -30,11 +32,7 @@ export const SignupView = ({ onSignupSuccess }) => {
       const responseData = await response.json();
       if (response.ok) {
         alert("Signup successful. You may now log in.");
-        if (onSignupSuccess) {
-          onSignupSuccess(); 
-        } else {
-          window.location.reload(); 
-        }
+        navigate('/login');
       } else {
         alert(`Signup failed: ${responseData.errors?.[0]?.msg || responseData.message || "Unknown error"}`);
       }
