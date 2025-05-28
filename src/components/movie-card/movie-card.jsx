@@ -33,7 +33,7 @@ export const MovieCard = ({
 
   const isFavorite = favoriteMovies?.some(
     (fav) => (typeof fav === "string" ? fav === movie._id : fav._id === movie._id)
-  );  
+  );
 
   const handleFavoriteToggle = () => {
     if (!finalUsername || !finalToken) {

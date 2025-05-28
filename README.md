@@ -2,7 +2,7 @@
 
 ## About This Application
 
-myFlix-client is the client-side of a web application that provides users with information about top movies, directors and genres. Users can create an account, update their personal information, and create a custom list of their favorite movies.
+myFlix-client is the client-side of a web application that provides users with information about top movies, directors and genres. Users can create and delete accounts, update their personal information, and create a custom list of their favorite movies.
 
 ## Features
 
@@ -34,5 +34,5 @@ myFlix-client is the client-side of a web application that provides users with i
 
 ## Where Can I Access This Application?
 
-- You can find the live application here:
+- You can find the live application here: [MovieMinded](https://movie-minded.netlify.app/)
 - The source code and documentation are available on GitHub: [myFlix-client Repository](https://github.com/Jonnits/myFlix-client)
