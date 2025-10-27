@@ -1,8 +1,8 @@
-# myFlix-client
+# MovieMinded-client
 
 ## About This Application
 
-myFlix-client is the client-side of a web application that provides users with information about top movies, directors and genres. Users can create and delete accounts, update their personal information, and create a custom list of their favorite movies.
+MovieMinded-client is the client-side of a web application that provides users with information about top movies, directors and genres. Users can create and delete accounts, update their personal information, and create a custom list of their favorite movies.
 
 ## Features
 
