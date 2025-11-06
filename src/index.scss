@@ -75,6 +75,38 @@ body {
   .container {
     background-color: transparent;
   }
+
+  .search-form-wrapper {
+    flex: 1 1 auto;
+    max-width: 100%;
+    min-width: 0;
+    
+    @media (min-width: 992px) {
+      flex: 1 1 70%;
+      max-width: 800px;
+    }
+    
+    .search-input {
+      flex: 1 1 auto;
+      min-width: 200px;
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+
+  // On smaller screens (below lg breakpoint), ensure search bar is in hamburger menu
+  @media (max-width: 991.98px) {
+    .search-form-wrapper {
+      width: 100%;
+      margin: 0.5rem 0 !important;
+      flex: 0 0 auto;
+      
+      .search-input {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
 }
 
 .btn-primary:not(.btn-success):not(.btn-danger) {

@@ -10,11 +10,11 @@ export const NavigationBar = ({ user, onLoggedOut, onSearch }) => {
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
           {user && (
-            <Form className="d-flex mx-auto">
+            <Form className="d-flex search-form-wrapper flex-grow-1 mx-lg-3 mx-md-2 mx-sm-1">
               <Form.Control
                 type="search"
                 placeholder="Which movies move you?"
-                className="me-2"
+                className="me-2 search-input"
                 aria-label="Search"
                 onChange={(e) => onSearch(e.target.value)}
               />

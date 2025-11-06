@@ -40,11 +40,17 @@ const MainView = () => {
     fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch movies: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
       .then((data) => setMovies(data))
-      .catch((error) =>
-        console.error("Error fetching movies:", error)
-      );
+      .catch((error) => {
+        console.error("Error fetching movies:", error);
+        setMovies([]); // Set empty array on error to prevent undefined issues
+      });
   }, [token]);
 
   const handleSearch = (query) => {
