@@ -22,7 +22,7 @@ body {
 
 .container {
   background-color: #343a40;
-  color: #000000;
+  color: #ffffff;
 }
 
 .card {
@@ -106,6 +106,77 @@ body {
         max-width: 100%;
       }
     }
+  }
+}
+
+// Headings - Crimson Pro font
+h1, h2, h3, h4, h5, h6, .alert-heading, .alert h1, .alert h2, .alert h3, .alert h4, .alert h5, .alert h6 {
+  font-family: 'Crimson Pro', serif;
+  color: #ffffff;
+}
+
+// Alert components - dark grey background with white text
+.alert {
+  background-color: #212529;
+  border-color: #495057;
+  color: #ffffff;
+  
+  &.alert-info {
+    background-color: #212529;
+    border-color: #495057;
+    color: #ffffff;
+  }
+  
+  &.alert-warning {
+    background-color: #212529;
+    border-color: #495057;
+    color: #ffffff;
+  }
+  
+  .alert-heading {
+    font-family: 'Crimson Pro', serif;
+    color: #ffffff;
+  }
+  
+  // Keep links styled but visible
+  a {
+    color: #0a6b75;
+    text-decoration: underline;
+    
+    &:hover {
+      color: #085057;
+    }
+  }
+}
+
+// General text styling - white text
+body, p, div, span, label, .form-label, .form-text {
+  color: #ffffff;
+}
+
+// Form controls - white text on dark background
+.form-control {
+  color: #ffffff;
+  background-color: #495057;
+  border-color: #6c757d;
+  
+  &:focus {
+    color: #ffffff;
+    background-color: #495057;
+    border-color: #0a6b75;
+  }
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+// Keep links visible and styled
+a:not(.btn):not(.nav-link):not(.navbar-brand) {
+  color: #0a6b75;
+  
+  &:hover {
+    color: #085057;
   }
 }
 

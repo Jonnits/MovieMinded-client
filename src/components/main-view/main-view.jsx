@@ -6,8 +6,8 @@ import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Col, Row } from "react-bootstrap";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { Col, Row, Container, Alert } from "react-bootstrap";
 
 const MainView = () => {
   const storedUser = (() => {
@@ -33,23 +33,43 @@ const MainView = () => {
     storedUser?.FavoriteMovies || []
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoadingMovies, setIsLoadingMovies] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setMovies([]);
+      setIsLoadingMovies(false);
+      return;
+    }
 
+    setIsLoadingMovies(true);
     fetch("https://movieminded-d764560749d0.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
         if (!response.ok) {
+          // If unauthorized, token might be expired - clear it
+          if (response.status === 401 || response.status === 403) {
+            // Clear session data
+            setUser(null);
+            setToken(null);
+            setFavoriteMovies([]);
+            setSearchQuery("");
+            localStorage.clear();
+            throw new Error("Session expired. Please log in again.");
+          }
           throw new Error(`Failed to fetch movies: ${response.status} ${response.statusText}`);
         }
         return response.json();
       })
-      .then((data) => setMovies(data))
+      .then((data) => {
+        setMovies(Array.isArray(data) ? data : []);
+        setIsLoadingMovies(false);
+      })
       .catch((error) => {
         console.error("Error fetching movies:", error);
-        setMovies([]); // Set empty array on error to prevent undefined issues
+        setMovies([]);
+        setIsLoadingMovies(false);
       });
   }, [token]);
 
@@ -131,21 +151,43 @@ const MainView = () => {
           path="/"
           element={
             user ? (
-              <Row className="justify-content-center">
-                {filteredMovies.map((movie) => (
-                  <Col className="mb-4" key={movie._id} xs={12} sm={6} md={4} lg={3} xl={2}>
-                    <MovieCard
-                      movie={movie}
-                      user={user}
-                      token={token}
-                      favoriteMovies={favoriteMovies}
-                      updateFavorites={updateFavorites}
-                    />
-                  </Col>
-                ))}
-              </Row>
+              <Container className="mt-4">
+                {isLoadingMovies ? (
+                  <Alert variant="info" className="text-center">
+                    Loading movies...
+                  </Alert>
+                ) : filteredMovies.length === 0 ? (
+                  <Alert variant="warning" className="text-center">
+                    {movies.length === 0 
+                      ? "No movies available. Please try refreshing the page."
+                      : "No movies match your search."}
+                  </Alert>
+                ) : (
+                  <Row className="justify-content-center">
+                    {filteredMovies.map((movie) => (
+                      <Col className="mb-4" key={movie._id} xs={12} sm={6} md={4} lg={3} xl={2}>
+                        <MovieCard
+                          movie={movie}
+                          user={user}
+                          token={token}
+                          favoriteMovies={favoriteMovies}
+                          updateFavorites={updateFavorites}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                )}
+              </Container>
             ) : (
-              <Navigate to="/login" replace />
+              <Container className="mt-5">
+                <Alert variant="info" className="text-center">
+                  <Alert.Heading>Welcome to MovieMinded!</Alert.Heading>
+                  <p>Please <Link to="/login">log in</Link> to browse and discover movies.</p>
+                  <p className="mb-0">
+                    Don't have an account? <Link to="/signup">Sign up</Link> to get started.
+                  </p>
+                </Alert>
+              </Container>
             )
           }
         />
